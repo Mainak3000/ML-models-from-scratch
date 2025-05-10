@@ -22,7 +22,7 @@ class LinearRegression:
                 self.c = 0
 
             self.X = np.array(X)
-            self.y = np.array(y)
+            self.y = np.array(y).flatten()
 
             #implementing gradient descent
             for i in range(self.n_iterations):
