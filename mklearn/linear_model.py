@@ -120,3 +120,58 @@ class LogisticRegression:
         except Exception as e:
             raise CustomException(e, sys) 
 
+
+
+class Lasso:
+    def __init__(self, learning_rate, n_iterations, alpha=1): ## alpha is regularization strength
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iterations
+        self.alpha = alpha
+
+    def fit(self, X, y):
+        try:
+            # no of training examples & features
+            # no of rows = no of training example || no of columns = no of features
+            self.rows, self.columns = X.shape 
+
+            self.w = np.zeros(self.columns)
+            self.b = 0
+
+            self.X = X
+            self.y = y
+
+            for i in range(self.n_iterations):
+                self.update_weights()
+
+        except Exception as e:
+            raise CustomException(e, sys)
+
+    def update_weights(self):
+        try:
+            y_pred = self.predict(self.X)
+
+            dw = np.zeros(self.columns )
+
+            for i in range(self.columns):
+                if self.w[i] > 0:
+                    dw[i] = - (2/self.rows) * ((self.X[:, i]).dot(self.y - y_pred) + self.alpha)
+
+                else:
+                    dw[i] = - (2/self.rows) * ((self.X[:, i]).dot(self.y - y_pred) - self.alpha)
+
+            db = (- 2/self.rows) * np.sum(self.y - y_pred)
+
+            self.w = self.w - self.learning_rate*dw
+            self.b = self.b - self.learning_rate*db
+
+        except Exception as e:
+            raise CustomException(e, sys)
+
+
+    def predict(self, X):
+        try:
+            return X.dot(self.w) + self.b
+        except Exception as e:
+            raise CustomException(e, sys)
+
+
