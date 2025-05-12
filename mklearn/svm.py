@@ -63,3 +63,60 @@ class SVC:
 
         except Exception as e:
             raise CustomException(e, sys)
+
+
+
+class SVR:
+    def __init__(self, learning_rate=0.001, n_iterations=1000, C=1.0, epsilon=0.1): #C is regularization parameter (lambda) 
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iterations
+        self.C = C 
+        self.epsilon = epsilon
+
+    def fit(self, X, y):
+        try:
+            self.X = np.array(X)
+            self.y = np.array(y).flatten()
+            self.rows, self.columns = self.X.shape
+
+            self.w = np.zeros(self.columns)
+            self.b = 0
+
+            for _ in range(self.n_iterations):
+                self.update_weights()
+
+        except Exception as e:
+            raise CustomException(e, sys)
+
+    def update_weights(self):
+        try:
+            dw = np.zeros(self.columns)
+            db = 0
+
+            for i in range(self.rows):
+                x_i = self.X[i]
+                y_i = self.y[i]
+                y_pred = np.dot(x_i, self.w) + self.b
+                error = y_pred - y_i
+
+                if error > self.epsilon:
+                    dw = dw + self.C * x_i
+                    db = db + self.C
+                elif error < -self.epsilon:
+                    dw = dw - self.C * x_i
+                    db = db - self.C
+                # else: within epsilon tube; no penalty
+
+            dw = dw + self.w  # Add derivative of regularization term
+            self.w = self.w - self.learning_rate * dw
+            self.b = self.b - self.learning_rate * db
+
+        except Exception as e:
+            raise CustomException(e, sys)
+
+    def predict(self, X):
+        try:
+            X = np.array(X)
+            return np.dot(X, self.w) + self.b
+        except Exception as e:
+            raise CustomException(e, sys)
